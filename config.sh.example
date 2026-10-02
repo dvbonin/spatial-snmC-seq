@@ -1,0 +1,50 @@
+# Machine-specific paths for the snmC-seq analysis.
+#
+# Everything here is specific to the system this was run on. To run the pipelines
+# elsewhere, change these values -- nothing outside this file should need editing.
+#
+# Source it once per shell before submitting anything:
+#
+#     source /path/to/SNMC/config.sh
+#
+# or add that line to ~/.bashrc. SLURM exports the submitting environment by
+# default, so jobs inherit these values. Each variable can also be overridden by
+# exporting it beforehand.
+
+# --- code -------------------------------------------------------------------
+: "${SNMC_ROOT:=/path/to/this/repository}"
+
+# --- data ---------------------------------------------------------------------
+# SNMC_DATA  raw sequencing runs, bulk plates, public datasets (read-only)
+# SNMC_WORK  everything the pipelines write: alignments, matrices, figures
+# SNMC_REFS  reference genomes, bisulfite indices, annotations
+# SNMC_TMP   scratch for job-local temporary files
+: "${SNMC_DATA:=/path/to/input/data}"
+: "${SNMC_WORK:=/path/to/output}"
+: "${SNMC_REFS:=${SNMC_WORK}/Refs}"
+: "${SNMC_TMP:=/path/to/scratch}"
+
+# Subtrees of SNMC_WORK, named because many scripts reference them directly.
+: "${SNMC_PIPE:=${SNMC_WORK}/SNMC_B1}"        # preprocessing + analysis output
+: "${SNMC_FIGS:=${SNMC_WORK}/Figures}"        # figure directories
+
+# --- conda environments -------------------------------------------------------
+# Recreate these from the YAMLs in Envs/ (resolved_*.txt records the exact versions
+# used) and point each variable at the resulting prefix.
+: "${SNMC_ENV_R:=/path/to/conda/envs/SNMC_R}"               # tidyverse, data.table, igraph, umap, patchwork
+: "${SNMC_ENV_BIO:=/path/to/conda/envs/SNMC_Bio}"           # biscuit, samtools, dupsifter, fastp
+: "${SNMC_ENV_METHSCAN:=/path/to/conda/envs/SNMC_MethScan}" # MethSCAn
+: "${SNMC_ENV_ARRAY:=/path/to/conda/envs/SNMC_Array}"                                 # minfi, EPIC annotation
+: "${SNMC_ENV_PQ:=/path/to/conda/envs/PQ}"           # python: pandas, numpy, matplotlib, pyarrow
+: "${SNMC_ENV_LIFTOVER:=/path/to/conda/envs/Liftover}"
+
+# tabix is called directly by scripts that run under the python environment, which
+# does not ship htslib, so it is taken from the bioinformatics environment.
+: "${SNMC_TABIX:=${SNMC_ENV_BIO}/bin/tabix}"
+
+export SNMC_ROOT SNMC_DATA SNMC_WORK SNMC_REFS SNMC_TMP SNMC_PIPE SNMC_FIGS \
+       SNMC_ENV_R SNMC_ENV_BIO SNMC_ENV_METHSCAN SNMC_ENV_ARRAY SNMC_ENV_PQ SNMC_ENV_LIFTOVER SNMC_TABIX
+
+# NOTE: #SBATCH directives inside the RunAll scripts (log file paths) cannot use
+# these variables -- SLURM reads those lines literally, before any shell runs. They
+# are the one place where an absolute path has to be edited directly.

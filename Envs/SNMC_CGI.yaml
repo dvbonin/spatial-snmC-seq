@@ -1,0 +1,17 @@
+name: SNMC_CGI
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+
+dependencies:
+  - r-base >=4.2
+  - r-optparse
+  - r-tidyverse
+  - r-umap
+  - r-data.table
+  - r-r.utils
+  - r-rcolorbrewer
+  - r-patchwork
+  - r-igraph
+  - r-ggtext

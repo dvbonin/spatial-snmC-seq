@@ -1,0 +1,13 @@
+name: SNMC_Bio
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+
+dependencies:
+  - fastp
+  - biscuit
+  - samtools
+  - htslib
+  - dupsifter
+  - pysam

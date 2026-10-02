@@ -1,0 +1,19 @@
+name: SNMC_Basic
+channels:
+  - bioconda
+  - conda-forge
+  - nodefaults
+
+dependencies:
+  - snakemake
+  - python
+  - fastp
+  - biscuit
+  - samtools
+  - htslib
+  - bcftools
+  - pysam
+  - dupsifter
+  - bedtools
+  - pandas
+  - matplotlib

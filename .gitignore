@@ -1,0 +1,42 @@
+# Snakemake cache and metadata
+.snakemake/
+*.snakemake
+
+# Conda environments
+*.yaml.lock
+*.conda
+
+# Logs and intermediate outputs
+*.log
+*.out
+*.err
+
+# Raw and reference data
+Refs/
+*.fastq
+*.fq
+*.bam
+*.bai
+*.vcf
+*.gz
+Envs/Built
+
+# System files
+.DS_Store
+__pycache__/
+*.pyc
+
+# Stuff
+Scratch/
+# Manuscript drafts
+*.docx
+*.doc
+
+# Machine-specific configuration (copy from config.sh.example)
+config.sh
+
+# Machine-specific pipeline configuration (copy from the .example files)
+Pipelines/*/Configs/Config_*.yaml
+Pipelines/*/config.yaml
+!Pipelines/*/Configs/Config_*.yaml.example
+!Pipelines/*/config.yaml.example

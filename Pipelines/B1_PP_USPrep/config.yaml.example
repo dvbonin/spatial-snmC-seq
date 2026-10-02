@@ -1,0 +1,52 @@
+executor: slurm
+
+jobs: 300
+
+use-conda: true
+conda-frontend: mamba
+conda-prefix: /path/to/this/repository/Envs/Built
+
+slurm-qos: "cpu_normal"
+
+set-threads:
+  fastp_trim: 8
+  biscuit_align: 16
+  dedup_reads: 8
+  collect_plate_meth_stats: 16
+  pileup_spikein_plate: 16
+  methscan_scan: 8
+  methscan_matrix: 8
+
+default-resources:
+  - runtime=600
+  - mem_mb=10000
+  - threads=1
+  - nodes=1
+  - slurm_partition=cpu_p
+  - tmpdir="/path/to/scratch"
+  - slurm_extra="'--exclude=cpusrv62'"
+
+set-resources:
+  fastqc_raw:
+    runtime: 600
+    mem_mb: 8000
+
+  biscuit_align:
+    runtime: 1440
+    mem_mb: 80000
+
+  biscuit_align_spikein:
+    runtime: 600
+    mem_mb: 50000
+
+  dedup_reads:
+    runtime: 1440
+    mem_mb: 50000
+
+  collect_plate_meth_stats:
+    runtime: 1440
+    mem_mb: 50000
+
+  pileup_spikein_plate:
+    runtime: 1440
+    mem_mb: 30000

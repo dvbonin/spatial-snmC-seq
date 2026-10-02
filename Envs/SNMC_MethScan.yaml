@@ -1,0 +1,16 @@
+name: SNMC_MethScan
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+
+dependencies:
+  - python=3.10
+  - pip
+  - setuptools
+  - wheel
+  - numpy<2
+  - pandas<2
+  - numba
+  - pip:
+      - methscan

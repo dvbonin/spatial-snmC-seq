@@ -1,0 +1,32 @@
+executor: slurm
+
+jobs: 300
+
+use-conda: true
+conda-frontend: mamba
+conda-prefix: /path/to/this/repository/Envs/Built
+
+slurm-qos: "cpu_normal"
+
+set-threads:
+  compute_pca: 4
+  methscan_scan: 8
+  methscan_matrix: 8
+
+default-resources:
+  - runtime=600
+  - mem_mb=10000
+  - threads=1
+  - nodes=1
+  - slurm_partition=cpu_p
+  - tmpdir="/path/to/scratch"
+  - slurm_extra="'--exclude=cpusrv62'"
+
+set-resources:
+  compute_pca:
+    runtime: 240
+    mem_mb: 40000
+
+  leiden_cluster:
+    runtime: 240
+    mem_mb: 20000

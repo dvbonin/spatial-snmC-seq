@@ -1,0 +1,20 @@
+# Config for FullPlate.smk -- plates barcoded as one full 384-well set.
+
+InDir: "/path/to/input/data/SNMC_B1/PrepUS"
+InFiles:
+  FirstPrep: [3, 4]
+
+ConfigDir: "/path/to/this/repository/Pipelines/B1_PP_USPrep/Configs"
+WorkingDir: "/path/to/this/repository"
+OutDir: "/path/to/output/SNMC_B1/PP_USPrep_All"
+
+Assembly: "MainRef"
+RefIndex:
+  MainRef: "/path/to/references/Builds/Biscuit_hg38/hg38.analysisSet.fa"
+
+SpikeIns:
+  Unmethylated: "/path/to/references/Builds/Biscuit_LambdaPhage/lambda_phage.fa"
+  Methylated: "/path/to/references/Builds/Biscuit_pUC19/pUC19.fa"
+  CombinedRef: "/path/to/references/Builds/Biscuit_SpikeIn/lambda_pUC19.fa"
+  LambdaContig: "NC_001416.1"
+  pUC19Contig:  "L09137.2"

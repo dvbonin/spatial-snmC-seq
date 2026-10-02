@@ -1,0 +1,11 @@
+name: SNMC_Analysis
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+
+dependencies:
+  - python
+  - bedtools
+  - pandas
+  - matplotlib
