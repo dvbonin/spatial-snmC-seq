@@ -21,6 +21,9 @@ OUT=${2:-$B/PreprintFigures_${FMT}.zip}
 TMP=${SNMC_TMP}
 
 PANELS=(
+  AssayComparison/Output/AssayComparison_CpGsPerCell
+  AssayComparison/Output/AssayComparison_CpGsPerReadPair
+  AssayComparison/Output/AssayComparison_ReadsVsCpGs
   CellTypeCounts/Output/CellTypeCounts_FirstPrep
   CorrHeatmaps/Output/CorrHeatmap_Sites_AllSites
   CorrHeatmaps/Output/CorrHeatmap_Sites_Top1pct
