@@ -3,6 +3,10 @@
 One summary table per FirstPrep plate: well position, cell count, raw and
 deduplicated read counts, CpG coverage, and the QC verdict.
 
+Raw reads are given both ways: RawReadPairs, and RawReads = 2 x RawReadPairs
+(every mate counted, the unit of the ReadCounts_* columns). Comparisons against
+other assays, whose published read numbers are SRA spots, must use RawReadPairs.
+
 Reads joined on WellPosition from three sources:
   well_stats.csv        Analysis.smk    cell count, ReadCounts_Main, CpGsCovered
   *_raw_reads.csv       CountRawBarcodes / MergeRawBarcodeCounts
@@ -32,18 +36,19 @@ with open(args.qc_pass) as f:
 os.makedirs(args.out_dir, exist_ok=True)
 for plate in args.plates.split(","):
     with open(os.path.join(args.raw_reads_dir, f"FirstPrep_{plate}_raw_reads.csv")) as f:
-        raw = {r["WellPosition"]: r["RawReads"] for r in csv.DictReader(f)}
+        raw = {r["WellPosition"]: (r["RawReadPairs"], r["RawReads"]) for r in csv.DictReader(f)}
 
     out = os.path.join(args.out_dir, f"FirstPrep_{plate}_well_summary.csv")
     n = passed = 0
     with open(os.path.join(args.well_stats_dir, f"FirstPrep_{plate}_well_stats.csv")) as f, \
          open(out, "w", newline="") as g:
         w = csv.writer(g, lineterminator="\n")
-        w.writerow(["WellPosition", "Cells", "RawReads", "Reads", "CpGs", "PassesQC"])
+        w.writerow(["WellPosition", "Cells", "RawReadPairs", "RawReads", "Reads", "CpGs",
+                    "PassesQC"])
         for r in csv.DictReader(f):
             well = r["WellPosition"]
             verdict = qc.get((plate, well), "")
-            w.writerow([well, r["CellCount"], raw[well],
+            w.writerow([well, r["CellCount"], *raw[well],
                         r["ReadCounts_Main"], r["CpGsCovered"], verdict])
             n += 1
             passed += verdict == "TRUE"

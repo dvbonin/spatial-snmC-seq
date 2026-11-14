@@ -6,7 +6,8 @@
 #   1.  RunAll.sh pre-qc     what QC needs, plus the inputs that need no QC at all
 #   2.  ../../QC             Leiden QC decision -> writes passes_cpg_qc into the
 #                            Analysis well_stats tables, and the QC-passed PCA
-#   3.  RunAll.sh post-qc    the single-cell pseudobulks, which pool QC-passed wells
+#   3.  RunAll.sh post-qc    the single-cell pseudobulks, which pool QC-passed wells,
+#                            and the per-plate well summaries
 #   4.  the figure dirs      CorrHeatmaps, PubSeq, ExpressionData, MarkerGenes,
 #                            Microarray, ...
 #
@@ -93,6 +94,18 @@ if [ "$STAGE" = pre-qc ]; then
      echo \"   lifted: \$(wc -l < $W/Data/ArrayProbes_hg38.bed)\"; \
      echo \"   unmapped: \$(( \$(wc -l < $W/Work/ArrayProbes_unmapped.bed) / 2 ))\"")"
 
+  # Raw read pairs per well, which the pipeline cannot report (barcodes are assigned
+  # after alignment): one array task per sequencing chunk, then barcode-corrected and
+  # summed per well. Only the well summaries of post-qc read them.
+  echo "== raw read pairs per well, from the untrimmed FASTQ =="
+  N_CHUNKS=$(ls "$DS"/PrepUS/FirstPrep_S*_P[34]_C*_R1.fastq.gz | wc -l)
+  J_RAW=$(cd "$S" && sbatch --parsable --array=1-"$N_CHUNKS" \
+    -o "$W/Logs/rawbc_%A_%a.log" -e "$W/Logs/rawbc_%A_%a.log" CountRawBarcodes.sbatch)
+  echo "   $J_RAW ($N_CHUNKS chunks)"
+  echo "   $(subpy raw_reads 4G 00:20:00 "$J_RAW" \
+    "python3 $S/MergeRawBarcodeCounts.py --counts-dir $W/Data/RawBarcodeCounts \
+     --mapping $SNMC_ROOT/Pipelines/B1_PP_USPrep/Configs/Mapping_384.csv --out-dir $W/Data")"
+
   echo
   echo "next: ../../QC/Scripts/RunAll.sbatch, then RunAll.sh post-qc"
 else
@@ -109,6 +122,11 @@ else
       "Rscript $S/BuildSingleCellPseudobulk.R --well-stats '$SRC' --weighting wells \
        --cell-type $TYPE --output $W/Data/PseudobulkWellMean_$TAG.bed.gz")"
   done
+
+  echo "== per-plate well summaries: cells, raw and deduplicated reads, CpGs, QC verdict =="
+  echo "   $(subpy well_summary 4G 00:10:00 - \
+    "python3 $S/BuildWellSummaryTables.py --well-stats-dir $WS --raw-reads-dir $W/Data \
+     --qc-pass ${SNMC_FIGS}/Preprint/QC/Data/FirstPrep_Merged_qc_pass.csv --out-dir $W/Data")"
   echo
   echo "next: the figure dirs"
 fi
